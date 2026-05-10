@@ -1,0 +1,23 @@
+[project]
+name = "weixin-agent-connect"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.9.0",
+    "pillow>=10.0.0",
+    "qrcode>=7.4.0",
+    "requests>=2.33.1",
+    "pycryptodome>=3.20.0",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+default = true
+
+[project.scripts]
+wechat-mcp = "wechat_mcp.main:main"
+
+[project.optional-dependencies]
+mcp = ["mcp>=0.1.0"]
+tts = ["edge-tts>=6.1.0"]
+dev = ["pytest>=8.0.0"]
