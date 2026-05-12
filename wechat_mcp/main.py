@@ -54,21 +54,25 @@ def cmd_listen(args):
     from wechat_mcp.ilink_client import ILinkClient
     client = ILinkClient()
     client.ensure_logged_in()
+    # 通知服务器客户端启动
+    try:
+        client.notify_start()
+    except Exception as e:
+        print(f"notify_start 失败（忽略）: {e}")
     cursor = None
-    print("🛰 开始长轮询监听微信消息... 按 Ctrl+C 退出\n")
+    print("开始长轮询监听微信消息... 按 Ctrl+C 退出\n")
     try:
         while True:
             msgs, cursor = client.get_updates(cursor)
             for m in msgs:
-                print(f"\n📩 收到消息:")
-                print(f"   发送者: {m.from_user_id}")
-                print(f"   类型: {m.msg_type} {'TEXT' if m.msg_type==1 else 'IMAGE' if m.msg_type==2 else 'OTHER'}")
-                print(f"   内容: {m.text or '(媒体/其他)'}")
-                print(f"   上下文: {m.context_token[:20]}...")
-                # 如果有文字，自动回复确认
+                print(f"\n收到消息:")
+                print(f"  发送者: {m.from_user_id}")
+                print(f"  类型: {m.msg_type} {'TEXT' if m.msg_type==1 else 'IMAGE' if m.msg_type==2 else 'OTHER'}")
+                print(f"  内容: {m.text or '(媒体/其他)'}")
+                print(f"  上下文: {m.context_token[:30]}...")
                 if m.text and not args.quiet:
                     client.reply_to_message(m, f"收到: {m.text}")
-                    print(f"   → 已自动回复")
+                    print(f"  -> 已自动回复")
             if args.once:
                 break
             if not msgs:

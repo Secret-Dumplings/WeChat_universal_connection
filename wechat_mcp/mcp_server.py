@@ -317,7 +317,6 @@ def _handle_listen(params: dict) -> dict:
                 "msg_id": m.msg_id,
                 "msg_type": m.msg_type,
                 "text": m.text,
-                "has_media": m.has_media,
                 "raw": m.raw,
             })
         return {
@@ -351,14 +350,26 @@ TOOL_HANDLERS = {
 # MCP 协议主循环
 # ─────────────────────────────────────────────────────────────
 
+_initialized = False
+
 def handle_request(req: dict) -> dict:
     """处理 MCP 请求"""
+    global _initialized
     method = req.get("method", "")
     req_id = resp_id(req)
     params = req.get("params", {})
 
     # 初始化
     if method == "initialize":
+        # 首次连接时通知服务器客户端上线
+        if not _initialized:
+            try:
+                client = get_client()
+                if client.bot_token:
+                    client.notify_start()
+            except Exception:
+                pass
+            _initialized = True
         return ok_result({
             "protocolVersion": "2024-11-05",
             "capabilities": {"tools": {}},

@@ -21,3 +21,6 @@ wechat-mcp = "wechat_mcp.main:main"
 mcp = ["mcp>=0.1.0"]
 tts = ["edge-tts>=6.1.0"]
 dev = ["pytest>=8.0.0"]
+
+[tool.uv]
+package = true
